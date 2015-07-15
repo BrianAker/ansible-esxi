@@ -1,0 +1,53 @@
+---
+- name: Common Play
+  hosts: esxi
+  gather_facts: false
+  remote_user: root
+  tasks:
+    - name: name 
+      raw: uname -a
+      register: uname_a 
+
+    - debug:
+        var: uname_a
+
+    - name: enable cdp
+      raw: esxcli network vswitch standard set --cdp-status=both -v vSwitch0
+
+    - name: generate ssl certificates
+      raw: generate-certificates
+
+    - name: set hostname
+      raw: "esxcli system hostname set --fqdn={{ ansible_hostname  }}"
+
+    - name: set dhcp hostname
+      - template: src=dhclient-vmk0.conf.j2 dest=/etc/dhclient-vmk0.conf
+
+    - name: Generate certification
+      raw: /bin/generate-certificates
+
+    - name: Enable vSphere MOB
+      raw: vim-cmd hostsvc/advopt/update Config.HostAgent.plugins.solo.enableMob bool true
+
+    - name: stop usbarbitrator
+      raw: /etc/init.d/usbarbitrator stop
+
+    - name: disable usbarbitrator
+      raw: chkconfig usbarbitrator off
+
+    - name: enable the use of USB disks
+      raw: esxcli system settings advanced set -o /VSAN/AllowUsbDisks -i 1
+
+- name: Require updated sata package
+  hosts: esxi
+  gather_facts: false
+  remote_user: root
+  tasks:
+    - name: set support to community
+      raw: esxcli software acceptance set --level=CommunitySupported
+
+    - name: Allow httpclient
+      raw: esxcli network firewall ruleset set -e true -r httpClient
+
+    - name: Install sata-xahci
+      raw: esxcli software vib install -d http://vibsdepot.v-front.de -n sata-xahci

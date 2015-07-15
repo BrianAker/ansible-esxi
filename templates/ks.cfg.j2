@@ -1,0 +1,18 @@
+vmaccepteula
+install --firstdisk --overwritevmfs
+{% if esxi_root_password is defined %}
+rootpw {{ esxi_root_password }}
+{%- endif %}
+
+network --bootproto=dhcp --device=vmnic0 --hostname=example.esxi
+
+# enable & start SSH
+vim-cmd hostsvc/enable_ssh
+vim-cmd hostsvc/start_ssh
+
+# enable & start ESXi Shell
+vim-cmd hostsvc/enable_esx_shell
+vim-cmd hostsvc/start_esx_shell
+
+# Suppress ESXi Shell warning
+esxcli system settings advanced set -o /UserVars/SuppressShellWarning -i 1

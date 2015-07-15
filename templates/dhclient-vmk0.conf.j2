@@ -1,0 +1,8 @@
+#
+# This file can be used to specify advanced dhclient options for vmk0
+# (usually the management interface). Please refer to dhclient.conf(5)
+# packaged with ISC DHCP 4.0.0 for available options.
+#
+interface vmk0 {
+  supersede host-name "{{ ansible_hostname }}";
+}
