@@ -2,3 +2,5 @@
 .Python
 roles/f500.dumpall
 *swp
+*pyc
+ansible.log

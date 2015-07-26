@@ -1,0 +1,27 @@
+---
+- name: Setup dump
+  hosts: all
+  connection: local
+
+  tasks:
+    - file: 
+          path: examine
+          state: directory
+          mode: 0700
+      delegate_to: localhost
+      run_once: true
+
+- name: Dump All
+  hosts: all
+
+#  tasks:
+#    - file:
+#          path: examine
+#          state: directory
+#          mode: 0700
+#      run_once: true
+#      delegate_to: localhost
+
+  roles:
+    - role: f500.dumpall
+    - { role: f500.dumpall, dumpall_host_destination: examine/ }

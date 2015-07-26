@@ -1,0 +1,15 @@
+---
+- name: populate hosts file on each host
+  hosts: esxi
+  gather_facts: true
+  remote_user: root
+  tasks:
+    - name: "Build hosts file"
+      lineinfile:
+          dest: /etc/hosts
+          regexp: '.*{{ item }}$'
+          line: "{{ lookup('dns', 'item') }} {{ item }}"
+          state: present
+      when: lookup('dns', item)
+      with_items: groups['all']
+

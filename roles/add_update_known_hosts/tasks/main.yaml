@@ -1,0 +1,29 @@
+---
+- name: remove by hostname
+  known_hosts: 
+      name: "{{ item }}"
+      path: "{{ known_hosts_file }}"
+      state: absent
+  with_items: groups['all']
+  run_once: true
+  delegate_to: localhost
+- name: remove by IP address
+  known_hosts: 
+      name: "{{ lookup('dns', 'item') }}"
+      path: "{{ known_hosts_file }}"
+      state: absent
+  with_items: groups['all']
+  run_once: true
+  delegate_to: localhost
+- name: Check host name availability
+  run_once: true
+  delegate_to: localhost
+  shell: "ssh-keygen -f {{ known_hosts_file }} -F {{ item }}"
+  with_items: groups['all']
+  register: ssh_known_host_results
+- name: Scan the public key
+  run_once: true
+  delegate_to: localhost
+  shell: "{{ ssh_known_hosts_command}} {{ item.item }} >> {{ known_hosts_file }}"
+  with_items: ssh_known_host_results.results
+  when: item.stdout == ""
