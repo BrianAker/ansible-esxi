@@ -1,0 +1,22 @@
+---
+- name: add authorized key
+  hosts: esxi
+  gather_facts: true
+  remote_user: root
+  tasks:
+    - name: Add authorized key to esxi host
+      authorized_key:
+          user: root
+          path: /etc/ssh/keys-root/authorized_keys
+          state: present
+          key: "{{ item }}"
+      with_items: root_keys
+
+    - name: "Build hosts file"
+      lineinfile:
+          dest: /etc/hosts
+          regexp: '.*{{ item }}$'
+          line: "{{ hostvars[item].ansible_default_ipv4.address }} {{ hostvars[item].ansible_fqdn }} {{ hostvars[item].ansible_hostname }}" 
+          state: present
+      when: hostvars[item].ansible_default_ipv4.address is defined
+      with_items: groups['all']

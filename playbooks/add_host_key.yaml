@@ -1,0 +1,41 @@
+---
+- hosts: all
+  gather_facts: true
+  connection: local
+  serial: 1
+
+  tasks:
+    - name: remove old host key
+      known_hosts: 
+          name: "{{ hostvars[item].ansible_default_ipv4.address }}"
+          path: "~/.ssh/known_hosts"
+          state: absent
+      with_items: groups['all']
+    - name: remove FQDN
+      known_hosts: 
+          name: "{{ hostvars[item].ansible_fqdn }}"
+          path: "~/.ssh/known_hosts"
+          state: absent
+      with_items: groups['all']
+    - name: remove ansible_hostname
+      known_hosts: 
+          name: "{{ hostvars[item].ansible_hostname }}"
+          path: "~/.ssh/known_hosts"
+          state: absent
+      with_items: groups['all']
+    - name: remove ansible_hostname
+      known_hosts: 
+          name: "{{ inventory_hostname }}"
+          path: "~/.ssh/known_hosts"
+          state: absent
+      with_items: groups['all']
+    - name: Check host name availability
+      shell: "ssh-keygen -f {{ ssh_known_hosts_file }} -F {{ item }}"
+      with_items:
+        - "{{ inventory_hostname }}"
+      register: ssh_known_host_results
+
+    - name: Scan the public key
+      shell: "{{ ssh_known_hosts_command}} {{ item.item }} >> {{ ssh_known_hosts_file }}"
+      with_items: ssh_known_host_results.results
+      when: item.stdout == ""

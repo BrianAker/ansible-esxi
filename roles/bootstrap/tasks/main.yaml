@@ -1,0 +1,18 @@
+---
+- name: enable cdp
+  command: esxcli network vswitch standard set --cdp-status=both -v vSwitch0
+
+- name: generate ssl certificates
+  command: generate-certificates
+
+- name: set hostname
+  command: "esxcli system hostname set --fqdn={{ ansible_hostname  }}"
+
+#    - name: set dhcp hostname
+#      - template: src=dhclient-vmk0.conf.j2 dest=/etc/dhclient-vmk0.conf
+
+- name: Generate certification
+  command: /bin/generate-certificates
+
+- name: Enable vSphere MOB
+  command: vim-cmd hostsvc/advopt/update Config.HostAgent.plugins.solo.enableMob bool true

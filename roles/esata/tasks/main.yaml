@@ -1,0 +1,9 @@
+---
+- name: set support to community
+  raw: esxcli software acceptance set --level=CommunitySupported
+
+- name: Allow httpclient
+  raw: esxcli network firewall ruleset set -e true -r httpClient
+
+- name: Install sata-xahci
+  raw: esxcli software vib install -d http://vibsdepot.v-front.de -n sata-xahci

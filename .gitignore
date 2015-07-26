@@ -1,3 +1,4 @@
 .ansible
 .Python
 roles/f500.dumpall
+*swp
