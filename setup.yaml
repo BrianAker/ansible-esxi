@@ -1,16 +1,9 @@
 ---
-- name: bootstrap esxi
+- name: setup esxi
   hosts: esxi
   #  gather_facts: false
   remote_user: root
   tasks:
-    - name: name 
-      raw: uname -a
-      register: uname_a 
-
-    - debug:
-        var: uname_a
-
     - name: enable cdp
       raw: esxcli network vswitch standard set --cdp-status=both -v vSwitch0
 
@@ -19,6 +12,10 @@
 
     - name: set hostname
       raw: "esxcli system hostname set --fqdn={{ ansible_hostname  }}"
+
+    - name: setup NFS mounts
+      raw: "esxcli storage nfs add --host={{ item.host }} -r --share={{ item.path }} -v {{ item.name }}"
+      with_items: nfs_mount_points 
 
 #    - name: set dhcp hostname
 #      - template: src=dhclient-vmk0.conf.j2 dest=/etc/dhclient-vmk0.conf

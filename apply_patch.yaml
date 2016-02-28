@@ -1,0 +1,15 @@
+---
+- name: apply patch
+  hosts: all
+  #  gather_facts: false
+  remote_user: root
+  tasks:
+    - fail: msg="ESXI_PATCH not provided"
+      when: ESXI_PATCH is not defined 
+
+    - name: esxcli software vib install 
+      raw: "esxcli software vib install -d {{ ESXI_PATCH }}"
+      register: results_esxi
+
+    - debug:
+        var: results_esxi

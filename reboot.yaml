@@ -1,0 +1,13 @@
+---
+- name: reboot hosts
+  serial: 1
+  hosts: all
+  #  gather_facts: false
+  remote_user: root
+  tasks:
+    - name: reboot
+      raw: reboot -f
+      register: results_esxi
+
+    - debug:
+        var: results_esxi
