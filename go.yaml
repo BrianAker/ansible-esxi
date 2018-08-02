@@ -11,14 +11,20 @@
     - debug:
         var: uname_a
 
+
+    - name: set host
+      raw: "esxcli system hostname set --host={{ ansible_hostname  }}"
+
+    - name: set fqdn
+      raw: "esxcli system hostname set --fqdn={{ ansible_hostname  }}"
+     
+        # esxcli network vswitch standard list -v vSwitch0
     - name: enable cdp
       raw: esxcli network vswitch standard set --cdp-status=both -v vSwitch0
 
+
     - name: generate ssl certificates
       raw: generate-certificates
-
-    - name: set hostname
-      raw: "esxcli system hostname set --fqdn={{ ansible_hostname  }}"
 
 #    - name: set dhcp hostname
 #      - template: src=dhclient-vmk0.conf.j2 dest=/etc/dhclient-vmk0.conf

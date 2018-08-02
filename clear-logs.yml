@@ -1,0 +1,11 @@
+---
+- name: clear logs
+  hosts: esxi
+  gather_facts: false
+  remote_user: root
+  tasks:
+    - name: clear ipmi log
+      raw: localcli hardware ipmi sel clear
+  tasks:
+    - name: sfcbd-watchdog
+      raw: /etc/init.d/sfcbd-watchdog restart
