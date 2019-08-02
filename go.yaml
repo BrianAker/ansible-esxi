@@ -26,6 +26,12 @@
     - name: generate ssl certificates
       raw: generate-certificates
 
+    - name: Download NUTS upsmon
+      get_url:
+        url: http://rene.margar.fr/download/1368/
+        dest: /tmp/NutClient-ESXi-2.0.0.tar.gz 
+        mode: 0440
+
 #    - name: set dhcp hostname
 #      - template: src=dhclient-vmk0.conf.j2 dest=/etc/dhclient-vmk0.conf
 #
